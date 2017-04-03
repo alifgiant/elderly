@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Elderly Watch</string>
+    <string name="title_log_in">Log in</string>
+    <string name="title_register">Register</string>
+    <string name="title_profile">Data Diri</string>
+
+    <!--LOGIN PAGE-->
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="button_log_in">Log In</string>
+    <string name="button_log_out">Log Out</string>
+    <string name="button_register">Register</string>
+
+    <!--REGISTER PAGE-->
+    <string name="role_prompt">Peran</string>
+    <string-array name="login_role">
+        <item>Pasien</item>
+        <item>Keluarga</item>
+        <item>Dokter</item>
+    </string-array>
+
+    <!--PROFILE PAGE-->
+    <string name="submit_data">Simpan Data</string>
+    <string name="cancel">Batal</string>
+    <string name="full_name">Nama Lengkap</string>
+    <string name="address">Alamat</string>
+    <string name="phone_number">Nomor Telpon</string>
+    <string name="birth_date">Tanggal Lahir</string>
+</resources>

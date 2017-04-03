@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="api_register">https://agile-hollows-68748.herokuapp.com/api/register</string>
+    <string name="api_login">https://agile-hollows-68748.herokuapp.com/api/login</string>
+    <string name="api_logout">https://agile-hollows-68748.herokuapp.com/api/logout</string>
+    <string name="api_get_profile">https://agile-hollows-68748.herokuapp.com/api/profile_get</string>
+    <string name="api_set_profile">https://agile-hollows-68748.herokuapp.com/api/profile_set</string>
+    <string name="api_web_socket">ws://agile-hollows-68748.herokuapp.com/elderly/websocket</string>
+</resources>
