@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.button_logout:
+            case R.id.button_setting:
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                 LinearLayout layout = new LinearLayout(LoginActivity.this);
                 final EditText urlText = new EditText(LoginActivity.this);
