@@ -6,6 +6,8 @@ import org.java_websocket.WebSocket;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import ua.naiksoftware.stomp.LifecycleEvent;
@@ -17,10 +19,30 @@ public class SocketController {
     private static final String TAG = SocketController.class.getSimpleName();
 
     private StompClient mStompClient;
+    private String username;
+    private OnMessageArriveListener messageArriveListener;
+
+    private Action1<StompMessage> messageAction = new Action1<StompMessage>() {
+        @Override
+        public void call(StompMessage stompMessage) {
+            String payload = stompMessage.getPayload();
+//                        Log.i(TAG, payload);
+            try {
+                JSONObject data = new JSONObject(payload);
+                double y = data.getDouble("x");
+                String status = data.getString("status");
+                messageArriveListener.onMessageArrive(y, status);
+            }catch (JSONException e){
+                Log.e(TAG, "data error: not json format");
+            }
+        }
+    };
 
     public SocketController(Context context, String username, final OnMessageArriveListener messageArriveListener) {
-        this.mStompClient = Stomp.over(WebSocket.class, context.getString(R.string.api_web_socket));
-
+        String url = String.format(Locale.US, context.getString(R.string.api_web_socket), AppSetting.getUrl(context));
+        this.mStompClient = Stomp.over(WebSocket.class, url);
+        this.username = username;
+        this.messageArriveListener = messageArriveListener;
         mStompClient.lifecycle()
                 .subscribe(new Action1<LifecycleEvent>() {
                     @Override
@@ -37,29 +59,14 @@ public class SocketController {
                         }
                     }
                 });
-
-        // Receive greetings
-        mStompClient.topic("/app/data/" + username)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<StompMessage>() {
-                    @Override
-                    public void call(StompMessage stompMessage) {
-                        String payload = stompMessage.getPayload();
-//                        Log.i(TAG, payload);
-                        try {
-                            JSONObject data = new JSONObject(payload);
-                            double y = data.getDouble("x");
-                            String status = data.getString("status");
-                            messageArriveListener.onMessageArrive(y, status);
-                        }catch (JSONException e){
-                            Log.e(TAG, "data error: not json format");
-                        }
-                    }
-                });
     }
 
     public void connect(){
         mStompClient.connect();
+        // Receive greetings
+        mStompClient.topic("/app/data/" + username)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(messageAction);
     }
 
     public void disconnect(){

@@ -14,6 +14,8 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -52,7 +54,8 @@ public class RegisterActivity extends AppCompatActivity {
         dialog.setIndeterminate(true);
         dialog.show();
 
-        AndroidNetworking.post(getString(R.string.api_register))
+        String url = String.format(Locale.US, getString(R.string.api_register), AppSetting.getUrl(RegisterActivity.this));
+        AndroidNetworking.post(url)
                 .addBodyParameter("username", username)
                 .addBodyParameter("password", password)
                 .addBodyParameter("role", role)

@@ -10,6 +10,9 @@ public class ElderlyAdapter extends SparkAdapter{
 
     public ElderlyAdapter() {
         dataHolder = new ArrayList<>();
+//        for (int i = 0; i < 100; i++) {
+//            dataHolder.add(0f);
+//        }
     }
 
     public void addDataToChart(float y){

@@ -17,6 +17,8 @@ import com.androidnetworking.interfaces.OkHttpResponseAndStringRequestListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -61,7 +63,8 @@ public class ProfileActivity extends AppCompatActivity {
         dialog.setMessage("Saving user data");
         dialog.setIndeterminate(true);
         dialog.show();
-        AndroidNetworking.post(getString(R.string.api_set_profile))
+        String url = String.format(Locale.US, getString(R.string.api_set_profile), AppSetting.getUrl(ProfileActivity.this));
+        AndroidNetworking.post(url)
                 .setPriority(Priority.MEDIUM)
                 .addHeaders("Cookie", AppSetting.getCookie(ProfileActivity.this))
                 .addBodyParameter("full_name", fullName)

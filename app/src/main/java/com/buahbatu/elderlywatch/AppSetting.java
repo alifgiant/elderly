@@ -50,4 +50,18 @@ public class AppSetting {
                 context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
         return preferences.getString("username", "");
     }
+
+    public static String getUrl(Context context){
+        SharedPreferences preferences =
+                context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
+        return preferences.getString("url", context.getString(R.string.default_url));
+    }
+
+    public static void saveUrl(Context context, String url){
+        SharedPreferences preferences =
+                context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("url", url);
+        editor.apply();
+    }
 }

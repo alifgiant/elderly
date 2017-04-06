@@ -24,6 +24,9 @@ import com.robinhood.spark.SparkView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -53,25 +56,30 @@ public class MainActivity extends AppCompatActivity implements SocketController.
     private boolean ringtoneIsIdle = true;
     void soundOnDrop(){
         if (ringtoneIsIdle){
-            ringtoneIsIdle = false;
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
-
-            MediaPlayer mp = MediaPlayer.create(this, notification);
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    ringtoneIsIdle = true;
-                }
-            });
-            mp.start();
+//            ringtoneIsIdle = false;
+//            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+//            r.play();
+//
+//            MediaPlayer mp = MediaPlayer.create(this, notification);
+//            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer mp) {
+//                    ringtoneIsIdle = true;
+//                }
+//            });
+//            mp.start();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // create socket
+        if (controller == null) {
+            controller = new SocketController(MainActivity.this,
+                    AppSetting.getUsername(MainActivity.this), this);
+        }
         controller.connect();
     }
 
@@ -79,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements SocketController.
     protected void onPause() {
         super.onPause();
         controller.disconnect();
+        controller = null;
     }
 
     @OnClick(R.id.profile_card) void onProfileClick(){
@@ -95,7 +104,8 @@ public class MainActivity extends AppCompatActivity implements SocketController.
         dialog.setMessage("Loading user data");
         dialog.setIndeterminate(true);
         dialog.show();
-        AndroidNetworking.post(getString(R.string.api_get_profile))
+        String url = String.format(Locale.US, getString(R.string.api_get_profile), AppSetting.getUrl(MainActivity.this));
+        AndroidNetworking.post(url)
                 .setPriority(Priority.MEDIUM)
                 .addHeaders("Cookie", AppSetting.getCookie(MainActivity.this))
                 .build()
@@ -140,7 +150,8 @@ public class MainActivity extends AppCompatActivity implements SocketController.
         dialog.setMessage("Loading");
         dialog.setIndeterminate(true);
         dialog.show();
-        AndroidNetworking.post(getString(R.string.api_logout))
+        String url = String.format(Locale.US, getString(R.string.api_logout), AppSetting.getUrl(MainActivity.this));
+        AndroidNetworking.post(url)
                 .setPriority(Priority.MEDIUM)
                 .addHeaders("Cookie", AppSetting.getCookie(MainActivity.this))
                 .build()
@@ -175,9 +186,6 @@ public class MainActivity extends AppCompatActivity implements SocketController.
 
             // load profile data
             loadProfileData();
-            // create socket
-            controller = new SocketController(MainActivity.this,
-                    AppSetting.getUsername(MainActivity.this), this);
             elderlyAdapter = new ElderlyAdapter();
             mDataView.setAdapter(elderlyAdapter);
         }
