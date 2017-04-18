@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -20,7 +20,6 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.OkHttpResponseAndStringRequestListener;
-import com.androidnetworking.interfaces.StringRequestListener;
 
 import java.util.Locale;
 
@@ -59,7 +58,11 @@ public class LoginActivity extends AppCompatActivity {
         dialog.setIndeterminate(true);
         dialog.show();
 
-        String url = String.format(Locale.US, getString(R.string.api_login), AppSetting.getUrl(LoginActivity.this));
+        String address = AppSetting.getUrl(LoginActivity.this) + AppSetting.getPort(LoginActivity.this);
+        String url = String.format(Locale.US, getString(R.string.api_login), address);
+
+        System.out.println(url);
+
         AndroidNetworking.post(url)
                 .addBodyParameter("username", username)
                 .addBodyParameter("password", password)
@@ -112,18 +115,41 @@ public class LoginActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.button_setting:
                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                LinearLayout layout = new LinearLayout(LoginActivity.this);
-                final EditText urlText = new EditText(LoginActivity.this);
-                layout.addView(urlText);
-                builder.setView(layout).setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                builder.setTitle(getString(R.string.setup_ip));
+
+                // Set up the input
+                final EditText inputIp = new EditText(this);
+                inputIp.setInputType(InputType.TYPE_CLASS_PHONE);
+                inputIp.setHint(R.string.example_ip);
+                final EditText inputPort = new EditText(this);
+                inputPort.setInputType(InputType.TYPE_CLASS_PHONE);
+                inputPort.setHint(R.string.example_port);
+
+                LinearLayout linearLayout = new LinearLayout(this);
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+                linearLayout.addView(inputIp);
+                linearLayout.addView(inputPort);
+
+                builder.setView(linearLayout);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (!TextUtils.isEmpty(urlText.getText())){
-                            AppSetting.saveUrl(LoginActivity.this, urlText.getText().toString());
-                            Toast.makeText(LoginActivity.this, "Url disimpan", Toast.LENGTH_SHORT).show();
+                    public void onClick(DialogInterface dialog, int which) {
+                        // save a new ip and port
+                        if (!TextUtils.isEmpty(inputIp.getText().toString()) && !TextUtils.isEmpty(inputPort.getText().toString()) ){
+                            AppSetting.saveAddress(LoginActivity.this, inputIp.getText().toString(), inputPort.getText().toString());
                         }
                     }
                 });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

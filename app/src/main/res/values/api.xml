@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="default_url">agile-hollows-68748.herokuapp.com</string>
-    <string name="api_register">https://%s/api/register</string>
-    <string name="api_login">https://%s/api/login</string>
-    <string name="api_logout">https://%s/api/logout</string>
-    <string name="api_get_profile">https://%s/api/profile_get</string>
-    <string name="api_set_profile">https://%s/api/profile_set</string>
+    <string name="default_port">:80</string>
+    <string name="api_register">http://%s/api/register</string>
+    <string name="api_login">http://%s/api/login</string>
+    <string name="api_logout">http://%s/api/logout</string>
+    <string name="api_get_patients">http://%s/api/patients_get</string>
+    <string name="api_get_profile">http://%s/api/profile_get</string>
+    <string name="api_set_profile">http://%s/api/profile_set</string>
     <string name="api_web_socket">ws://%s/elderly/websocket</string>
 </resources>

@@ -2,37 +2,35 @@ package com.buahbatu.elderlywatch;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
+
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.OkHttpResponseAndJSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.buahbatu.elderlywatch.adapter.ElderlyAdapter;
+import com.buahbatu.elderlywatch.adapter.ProfileRecyclerAdapter;
+import com.buahbatu.elderlywatch.loader.PatientLoader;
+import com.buahbatu.elderlywatch.model.User;
 import com.robinhood.spark.SparkView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements SocketController.OnMessageArriveListener{
+import static com.buahbatu.elderlywatch.adapter.ProfileRecyclerAdapter.SELF;
+
+public class MainActivity extends AppCompatActivity{
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String KEY_FULL_NAME = "full_name";
@@ -42,107 +40,22 @@ public class MainActivity extends AppCompatActivity implements SocketController.
     public static final int CODE_UPDATE_REQUEST = 100;
     public static final int CODE_UPDATE_REQUEST_SUCCESS = 200;
 
-    private SocketController controller;
+//    private SocketController controller;
 
-    @BindView(R.id.text_status) TextView mStatusText;
-    @BindView(R.id.text_full_name) TextView mFullNameText;
-    @BindView(R.id.text_address) TextView mAddressText;
-    @BindView(R.id.text_phone_number) TextView mPhoneNumberText;
-    @BindView(R.id.text_birth_date) TextView mBirthDateText;
+    @BindView(R.id.profile_recycler) RecyclerView mRecyclerView;
 
-    @BindView(R.id.spark_graph) SparkView mDataView;
-    private ElderlyAdapter elderlyAdapter;
-
-    private boolean ringtoneIsIdle = true;
-    void soundOnDrop(){
-        if (ringtoneIsIdle){
-//            ringtoneIsIdle = false;
-//            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-//            r.play();
-//
-//            MediaPlayer mp = MediaPlayer.create(this, notification);
-//            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                @Override
-//                public void onCompletion(MediaPlayer mp) {
-//                    ringtoneIsIdle = true;
-//                }
-//            });
-//            mp.start();
-        }
-    }
+    ProfileRecyclerAdapter recyclerAdapter;
 
     @Override
     protected void onResume() {
         super.onResume();
-        // create socket
-        if (controller == null) {
-            controller = new SocketController(MainActivity.this,
-                    AppSetting.getUsername(MainActivity.this), this);
-        }
-        controller.connect();
+        recyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        controller.disconnect();
-        controller = null;
-    }
-
-    @OnClick(R.id.profile_card) void onProfileClick(){
-        Intent moveIntent = new Intent(MainActivity.this, ProfileActivity.class);
-        moveIntent.putExtra(KEY_FULL_NAME, mFullNameText.getText().toString());
-        moveIntent.putExtra(KEY_ADDRESS, mAddressText.getText().toString());
-        moveIntent.putExtra(KEY_PHONE_NUMBER, mPhoneNumberText.getText().toString());
-        moveIntent.putExtra(KEY_BIRTH_DATE, mBirthDateText.getText().toString());
-        startActivityForResult(moveIntent, CODE_UPDATE_REQUEST);
-    }
-
-    void loadProfileData(){
-        final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
-        dialog.setMessage("Loading user data");
-        dialog.setIndeterminate(true);
-        dialog.show();
-        String url = String.format(Locale.US, getString(R.string.api_get_profile), AppSetting.getUrl(MainActivity.this));
-        AndroidNetworking.post(url)
-                .setPriority(Priority.MEDIUM)
-                .addHeaders("Cookie", AppSetting.getCookie(MainActivity.this))
-                .build()
-                .getAsOkHttpResponseAndJSONObject(new OkHttpResponseAndJSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(Response okHttpResponse, JSONObject response) {
-                        String cookie = okHttpResponse.header("Set-Cookie", "");
-                        AppSetting.setCookie(MainActivity.this, cookie);
-
-                        String fullName = "";
-                        String address = "";
-                        String birthDate = "";
-                        String phoneNum = "";
-
-                        try {
-                            fullName = response.getString("full_name");
-                            address = response.getString("address");
-                            birthDate = response.getString("birth_date");
-                            phoneNum = response.getString("phone_number");
-                        }catch (JSONException e){
-                            Log.e(TAG, "onResponse: JSON field missing");
-                        }
-
-                        mFullNameText.setText(fullName);
-                        mAddressText.setText(address);
-                        mBirthDateText.setText(birthDate);
-                        mPhoneNumberText.setText(phoneNum);
-
-                        dialog.dismiss();
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        Log.i(TAG, "onResponse: error");
-                        dialog.dismiss();
-                    }
-                });
+        recyclerAdapter.disconnectAllConnector();
     }
 
     void onLogOutClick(){
@@ -176,18 +89,47 @@ public class MainActivity extends AppCompatActivity implements SocketController.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         if (!AppSetting.isUserLoggedIn(MainActivity.this)) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }else {
+            setContentView(R.layout.activity_main);
             ButterKnife.bind(this);
             AndroidNetworking.initialize(getApplicationContext());
 
-            // load profile data
-            loadProfileData();
-            elderlyAdapter = new ElderlyAdapter();
-            mDataView.setAdapter(elderlyAdapter);
+            // init recycler
+            recyclerAdapter = new ProfileRecyclerAdapter(MainActivity.this, itemClickedListener);
+            mRecyclerView.setAdapter(recyclerAdapter);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+            // check whether doctor or not
+            new PatientLoader(MainActivity.this).getPatientData(new PatientLoader.OnPatientDataReadyListener() {
+                @Override
+                public void onPatientDataArrived(List<String> userNames) {
+
+                    // add current user profile
+                    userNames.add(0, SELF);
+
+                    // add patient data
+                    for (String s : userNames){
+                        recyclerAdapter.addUser(s);
+                    }
+
+//                    if (userNames.size() == 1)
+//                        recyclerAdapter.patientViewEnabled();
+                }
+
+                @Override
+                public void onPatientDataNone() {
+                    // add current user profile
+                    recyclerAdapter.addUser(SELF);
+                }
+
+                @Override
+                public void onLoadFinished() {
+                    // decide is patient or not
+                }
+            });
         }
     }
 
@@ -210,29 +152,31 @@ public class MainActivity extends AppCompatActivity implements SocketController.
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CODE_UPDATE_REQUEST && resultCode == CODE_UPDATE_REQUEST_SUCCESS)
-            loadProfileData(); // reload data
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == CODE_UPDATE_REQUEST && resultCode == CODE_UPDATE_REQUEST_SUCCESS){
+//            // reload data
+//            ProfileLoader profileLoader = new ProfileLoader(MainActivity.this, mFullNameText,
+//                    mAddressText, mBirthDateText, mPhoneNumberText);
+//            profileLoader.loadProfileData();
+//        }
+//    }
 
-    @Override
-    public void onMessageArrive(double y, String status) {
-        Log.i(TAG, "onMessageArrive: " + y + " " + status);
-        elderlyAdapter.addDataToChart((float)y);
-        elderlyAdapter.notifyDataSetChanged();
-        mStatusText.setText(status.toUpperCase());
-        switch (status){
-            case "idle": mStatusText.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorIdle));
-                break;
-            case "sit": mStatusText.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorSit));
-                break;
-            case "walk": mStatusText.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorWalk));
-                break;
-            case "drop": mStatusText.setBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.colorDrop));
-                soundOnDrop();
-                break;
+
+    ProfileRecyclerAdapter.OnItemListener itemClickedListener = new ProfileRecyclerAdapter.OnItemListener() {
+        @Override
+        public void itemClicked(int position, User user) {
+            // set profile is only available for user[0]
+            if (position == 0) {
+                Intent moveIntent = new Intent(MainActivity.this, ProfileActivity.class);
+
+                moveIntent.putExtra(KEY_FULL_NAME, user.FullName);
+                moveIntent.putExtra(KEY_ADDRESS, user.Address);
+                moveIntent.putExtra(KEY_PHONE_NUMBER, user.PhoneNumber);
+                moveIntent.putExtra(KEY_BIRTH_DATE, user.BirthDate);
+                startActivityForResult(moveIntent, CODE_UPDATE_REQUEST);
+            }
         }
-    }
+    };
 }

@@ -73,7 +73,7 @@ public class SocketController {
         mStompClient.disconnect();
     }
 
-    interface OnMessageArriveListener{
+    public interface OnMessageArriveListener{
         void onMessageArrive(double y, String status);
     }
 }

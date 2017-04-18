@@ -63,7 +63,10 @@ public class ProfileActivity extends AppCompatActivity {
         dialog.setMessage("Saving user data");
         dialog.setIndeterminate(true);
         dialog.show();
-        String url = String.format(Locale.US, getString(R.string.api_set_profile), AppSetting.getUrl(ProfileActivity.this));
+
+        String ipAddress = AppSetting.getUrl(ProfileActivity.this) + AppSetting.getPort(ProfileActivity.this);
+        String url = String.format(Locale.US, getString(R.string.api_set_profile), ipAddress);
+
         AndroidNetworking.post(url)
                 .setPriority(Priority.MEDIUM)
                 .addHeaders("Cookie", AppSetting.getCookie(ProfileActivity.this))

@@ -57,11 +57,20 @@ public class AppSetting {
         return preferences.getString("url", context.getString(R.string.default_url));
     }
 
-    public static void saveUrl(Context context, String url){
+    public static String getPort(Context context){
+        SharedPreferences preferences =
+                context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
+        return preferences.getString("port", context.getString(R.string.default_port));
+    }
+
+    public static void saveAddress(Context context, String url, String port){
         SharedPreferences preferences =
                 context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+
         editor.putString("url", url);
+        editor.putString("port", ":"+port);
+
         editor.apply();
     }
 }
