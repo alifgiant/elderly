@@ -36,6 +36,7 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
 
     // load user profile data
     private ProfileLoader profileLoader;
+    private MediaPlayer mediaPlayer;
 
     private boolean ringtoneIsIdle = true;
 
@@ -44,6 +45,26 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         this.listener = itemClickedListener;
         this.userList = new ArrayList<>();
         this.socketControllers= new ArrayList<>();
+
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        Ringtone r = RingtoneManager.getRingtone(context, notification);
+//        r.play();
+
+        // media player
+        this.mediaPlayer = MediaPlayer.create(context, notification);
+        this.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                ringtoneIsIdle = true;
+            }
+        });
+        this.mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                ringtoneIsIdle = true;
+                return true;
+            }
+        });
 
         profileLoader = new ProfileLoader(context, new ProfileLoader.OnProfileReadyListener() {
             @Override
@@ -58,15 +79,6 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
         loadUserData(user);
     }
 
-//    public void updateStatus(int position, String status){
-//        userList.get(position).Status = status;
-//        notifyItemChanged(position);
-//    }
-//
-//    public void patientViewEnabled(){
-//
-//    }
-
     public void disconnectAllConnector(){
         for(SocketController s : socketControllers){
             s.disconnect();
@@ -76,19 +88,9 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
 
     private void soundOnDrop(){
         if (ringtoneIsIdle){
-//            ringtoneIsIdle = false;
-//            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//            Ringtone r = RingtoneManager.getRingtone(context, notification);
-//            r.play();
-//
-//            MediaPlayer mp = MediaPlayer.create(context, notification);
-//            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                @Override
-//                public void onCompletion(MediaPlayer mp) {
-//                    ringtoneIsIdle = true;
-//                }
-//            });
-//            mp.start();
+            ringtoneIsIdle = false;
+
+            mediaPlayer.start();
         }
     }
 

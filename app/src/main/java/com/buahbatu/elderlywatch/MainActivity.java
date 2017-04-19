@@ -63,7 +63,11 @@ public class MainActivity extends AppCompatActivity{
         dialog.setMessage("Loading");
         dialog.setIndeterminate(true);
         dialog.show();
-        String url = String.format(Locale.US, getString(R.string.api_logout), AppSetting.getUrl(MainActivity.this));
+
+        String address = AppSetting.getUrl(MainActivity.this)
+                + AppSetting.getPort(MainActivity.this) + AppSetting.getSubPath(MainActivity.this);
+        String url = String.format(Locale.US, getString(R.string.api_logout), address);
+
         AndroidNetworking.post(url)
                 .setPriority(Priority.MEDIUM)
                 .addHeaders("Cookie", AppSetting.getCookie(MainActivity.this))
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity{
 
                     @Override
                     public void onError(ANError anError) {
-                        Log.i(TAG, "onResponse: error");
+                        Log.i(TAG, "logoutResponseError: " + anError.getErrorDetail());
                         dialog.dismiss();
                     }
                 });

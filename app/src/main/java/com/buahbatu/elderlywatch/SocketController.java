@@ -40,8 +40,10 @@ public class SocketController {
 
     public SocketController(Context context, String username, final OnMessageArriveListener messageArriveListener) {
         String ipAddress = AppSetting.getUrl(context)
-                + AppSetting.getSubPath(context);
+                + AppSetting.getPort(context) + AppSetting.getSubPath(context);
         String url = String.format(Locale.US, context.getString(R.string.api_web_socket), ipAddress);
+
+        System.out.println("WS URL " + url);
 
         this.mStompClient = Stomp.over(WebSocket.class, url);
         this.username = username;

@@ -4,6 +4,7 @@
     <string name="title_register">Register</string>
     <string name="title_account">Data Akun</string>
     <string name="title_profile">Data Diri</string>
+    <string name="title_patient">DAFTAR PASIEN</string>
 
     <!--LOGIN PAGE-->
     <string name="setup_ip">Set new address</string>

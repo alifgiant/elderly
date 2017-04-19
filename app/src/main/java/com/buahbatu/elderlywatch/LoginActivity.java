@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                 inputPort.setInputType(InputType.TYPE_CLASS_NUMBER);
                 inputPort.setHint(R.string.example_port);
                 final EditText inputPath = new EditText(this);
-                inputPath.setInputType(InputType.TYPE_CLASS_DATETIME);
+                inputPath.setInputType(InputType.TYPE_CLASS_TEXT);
                 inputPath.setHint(R.string.example_sub_path);
 
                 LinearLayout linearLayout = new LinearLayout(this);
