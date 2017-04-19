@@ -51,7 +51,8 @@ public class ProfileLoader {
         Log.i(TAG, "loadProfileData: " + username);
         Log.i(TAG, "ProfileResponse before: " + AppSetting.getCookie(context));
 
-        String ipAddress = AppSetting.getUrl(context) + AppSetting.getPort(context);
+        String ipAddress = AppSetting.getUrl(context)
+                + AppSetting.getPort(context) + AppSetting.getSubPath(context);
         String url = String.format(Locale.US, context.getString(R.string.api_get_profile), ipAddress);
 
         AndroidNetworking.post(url)

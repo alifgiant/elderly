@@ -76,19 +76,19 @@ public class ProfileRecyclerAdapter extends RecyclerView.Adapter<ProfileRecycler
 
     private void soundOnDrop(){
         if (ringtoneIsIdle){
-            ringtoneIsIdle = false;
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(context, notification);
-            r.play();
-
-            MediaPlayer mp = MediaPlayer.create(context, notification);
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    ringtoneIsIdle = true;
-                }
-            });
-            mp.start();
+//            ringtoneIsIdle = false;
+//            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//            Ringtone r = RingtoneManager.getRingtone(context, notification);
+//            r.play();
+//
+//            MediaPlayer mp = MediaPlayer.create(context, notification);
+//            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer mp) {
+//                    ringtoneIsIdle = true;
+//                }
+//            });
+//            mp.start();
         }
     }
 

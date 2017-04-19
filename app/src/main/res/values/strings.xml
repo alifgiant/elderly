@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Elderly Watch</string>
+    <string name="app_name">Elderly Watch v2</string>
     <string name="title_log_in">Log in</string>
     <string name="title_register">Register</string>
     <string name="title_account">Data Akun</string>

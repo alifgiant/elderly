@@ -114,7 +114,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     void doRegister(String username, String password, String role, final OnRegisterFinishedListener listener){
-        String address = AppSetting.getUrl(RegisterActivity.this) + AppSetting.getPort(RegisterActivity.this);
+        String address = AppSetting.getUrl(RegisterActivity.this)
+                + AppSetting.getPort(RegisterActivity.this) + AppSetting.getSubPath(RegisterActivity.this);
         String url = String.format(Locale.US, getString(R.string.api_register), address);
 
         AndroidNetworking.post(url)
@@ -143,7 +144,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     void doSetupProfile(String fullName, String address, String dob, String phoneNum){
-        String ipAddress = AppSetting.getUrl(RegisterActivity.this) + AppSetting.getPort(RegisterActivity.this);
+        String ipAddress = AppSetting.getUrl(RegisterActivity.this)
+                + AppSetting.getPort(RegisterActivity.this) + AppSetting.getSubPath(RegisterActivity.this);
         String url = String.format(Locale.US, getString(R.string.api_set_profile), ipAddress);
 
         AndroidNetworking.post(url)

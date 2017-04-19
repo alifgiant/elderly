@@ -58,7 +58,8 @@ public class LoginActivity extends AppCompatActivity {
         dialog.setIndeterminate(true);
         dialog.show();
 
-        String address = AppSetting.getUrl(LoginActivity.this) + AppSetting.getPort(LoginActivity.this);
+        String address = AppSetting.getUrl(LoginActivity.this)
+                + AppSetting.getPort(LoginActivity.this) + AppSetting.getSubPath(LoginActivity.this);
         String url = String.format(Locale.US, getString(R.string.api_login), address);
 
         System.out.println(url);
@@ -122,13 +123,17 @@ public class LoginActivity extends AppCompatActivity {
                 inputIp.setInputType(InputType.TYPE_CLASS_PHONE);
                 inputIp.setHint(R.string.example_ip);
                 final EditText inputPort = new EditText(this);
-                inputPort.setInputType(InputType.TYPE_CLASS_PHONE);
+                inputPort.setInputType(InputType.TYPE_CLASS_NUMBER);
                 inputPort.setHint(R.string.example_port);
+                final EditText inputPath = new EditText(this);
+                inputPath.setInputType(InputType.TYPE_CLASS_DATETIME);
+                inputPath.setHint(R.string.example_sub_path);
 
                 LinearLayout linearLayout = new LinearLayout(this);
                 linearLayout.setOrientation(LinearLayout.VERTICAL);
                 linearLayout.addView(inputIp);
                 linearLayout.addView(inputPort);
+                linearLayout.addView(inputPath);
 
                 builder.setView(linearLayout);
 
@@ -138,7 +143,10 @@ public class LoginActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // save a new ip and port
                         if (!TextUtils.isEmpty(inputIp.getText().toString()) && !TextUtils.isEmpty(inputPort.getText().toString()) ){
-                            AppSetting.saveAddress(LoginActivity.this, inputIp.getText().toString(), inputPort.getText().toString());
+                            AppSetting.saveAddress(LoginActivity.this,
+                                    inputIp.getText().toString(),
+                                    inputPort.getText().toString(),
+                                    inputPath.getText().toString());
                         }
                     }
                 });

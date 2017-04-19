@@ -39,7 +39,10 @@ public class SocketController {
     };
 
     public SocketController(Context context, String username, final OnMessageArriveListener messageArriveListener) {
-        String url = String.format(Locale.US, context.getString(R.string.api_web_socket), AppSetting.getUrl(context));
+        String ipAddress = AppSetting.getUrl(context)
+                + AppSetting.getSubPath(context);
+        String url = String.format(Locale.US, context.getString(R.string.api_web_socket), ipAddress);
+
         this.mStompClient = Stomp.over(WebSocket.class, url);
         this.username = username;
         this.messageArriveListener = messageArriveListener;

@@ -40,7 +40,8 @@ public class PatientLoader {
         dialog.setIndeterminate(true);
         dialog.show();
 
-        String ipAddress = AppSetting.getUrl(context) + AppSetting.getPort(context);
+        String ipAddress = AppSetting.getUrl(context)
+                + AppSetting.getPort(context) + AppSetting.getSubPath(context);
         String url = String.format(Locale.US, context.getString(R.string.api_get_patients), ipAddress);
 
         AndroidNetworking.post(url)

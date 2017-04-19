@@ -2,6 +2,7 @@
 <resources>
     <string name="default_url">agile-hollows-68748.herokuapp.com</string>
     <string name="default_port">:80</string>
+    <string name="example_sub_path">/app</string>
     <string name="api_register">http://%s/api/register</string>
     <string name="api_login">http://%s/api/login</string>
     <string name="api_logout">http://%s/api/logout</string>
