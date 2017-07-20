@@ -24,7 +24,8 @@ import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
-    private final ProgressDialog dialog = new ProgressDialog(RegisterActivity.this);
+
+    private ProgressDialog dialog;
 
     @BindView(R.id.text_username) EditText mEditUsername;
     @BindView(R.id.text_password) EditText mEditPassword;
@@ -190,6 +191,8 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
+
+        dialog = new ProgressDialog(RegisterActivity.this);
 
         // initialize networking lib
         AndroidNetworking.initialize(getApplicationContext());
